@@ -1,0 +1,12 @@
+{
+  "name": "album-copa-2026",
+  "version": "1.0.0",
+  "description": "Album de Figurinhas Copa do Mundo 2026",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
