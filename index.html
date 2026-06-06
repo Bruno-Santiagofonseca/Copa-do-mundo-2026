@@ -258,6 +258,28 @@
     .medal.on { filter: none; transform: scale(1.15); }
     .medal.on small { color: var(--blue); }
 
+    /* ===== CTA ===== */
+    .cta-card {
+      background: oklch(0.98 0.006 145 / .95);
+      border: 2px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin: 10px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow);
+      font-size: .85rem;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .cta-card .cta-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .cta-card strong { color: var(--green-b); }
+
     /* ===== BUSCA ===== */
     .search-wrap {
       position: sticky;
@@ -732,6 +754,17 @@
       <div class="medal" id="m200">👟<small>200 fig.</small></div>
       <div class="medal" id="m500">🏆<small>500 fig.</small></div>
       <div class="medal" id="m100">🌟<small>100%</small></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <div class="cta-icon">⚽</div>
+    <div class="cta-body">
+      <strong>Meu Álbum Copa 2026</strong><br>
+      Gerencie suas figurinhas do álbum da Copa do Mundo 2026.<br>
+      Marque as que você já colou, veja as repetidas, troque com os amigos e complete o álbum!
+      Os dados ficam salvos <em>só no seu celular</em> — cada um tem o seu.
     </div>
   </div>
 
