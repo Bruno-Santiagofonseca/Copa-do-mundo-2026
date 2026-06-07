@@ -1,11 +1,11 @@
 {
-  "name": "Meu Álbum Copa 2026",
-  "short_name": "Álbum 2026",
-  "description": "Controle simples de figurinhas da Copa do Mundo 2026 para crianças!",
+  "name": "Álbum FIFA 2026 — Infantil",
+  "short_name": "FIFA 2026",
+  "description": "Álbum de figurinhas divertido da Copa do Mundo FIFA 2026 — para crianças",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#002776",
-  "theme_color": "#009C3B",
+  "background_color": "#F0EEFF",
+  "theme_color": "#1B1464",
   "orientation": "portrait-primary",
   "icons": [
     {
