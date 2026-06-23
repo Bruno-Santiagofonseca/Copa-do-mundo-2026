@@ -1792,6 +1792,7 @@
         btn.classList.toggle('on', s === id);
         btn.setAttribute('aria-current', s === id ? 'page' : 'false');
       });
+      document.querySelector('.search-wrap').style.display = id === 'album' ? 'block' : 'none';
       window.scrollTo(0, 0);
       if (id === 'rep')  renderRepetidas();
       if (id === 'rank') renderRanking();
