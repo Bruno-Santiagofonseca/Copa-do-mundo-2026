@@ -606,7 +606,7 @@
       color: var(--text3);
       min-height: 48px;
       -webkit-touch-callout: none;
-      overflow: hidden;
+      overflow: visible;
     }
     .fig-inner {
       display: flex;
@@ -676,6 +676,7 @@
       border: 2px solid var(--surface);
       line-height: 1.3;
       box-shadow: 0 2px 6px oklch(0 0 0 / 0.1);
+      z-index: 3;
     }
 
     /* ===== REPEATED ===== */
@@ -1109,7 +1110,7 @@
   <div class="cta-row">
     <div class="cta-icon">⚽</div>
     <div>
-      <strong class="fun">WE ARE 26</strong> — Toque na figurinha para <strong>coletar</strong>, de novo para <strong>repetir</strong>. Busque por país ou código (ex: BRA 5). Segure para zerar.
+      <strong class="fun">WE ARE 26</strong> — Toque na figurinha para <strong>coletar</strong>, de novo para <strong>repetir</strong>. Na aba Repetidas, toque para <strong>dar baixa</strong>. Segure para <strong>zerar</strong>.
     </div>
   </div>
 
@@ -1130,6 +1131,10 @@
   <div class="section" id="sec-rep">
     <h2 class="sec-header">🔄 Repetidas</h2>
     <div class="sec-body">
+      <div class="search-wrap" style="position:relative;padding:0 0 10px">
+        <input type="text" id="search-rep" class="search-inp" placeholder="🔍 Buscar repetida (ex: BRA 5)" oninput="doSearchRep(this.value)">
+        <div id="search-rep-clear" style="position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:1rem;cursor:pointer;color:var(--text3);display:none;line-height:1" onclick="clearSearchRep()" role="button" tabindex="0">✕</div>
+      </div>
       <div class="rep-grid" id="rep-root">
         <div class="empty-msg">Ainda sem repetidas</div>
       </div>
@@ -1565,6 +1570,20 @@
       showUndoToast('Figurinha removida');
     }
 
+    function decrementFig(k, t) {
+      const v = state[k] || 0;
+      if (v === 0) return;
+      const prev = v;
+      state[k] = v - 1;
+      save();
+      refreshFig(k);
+      refreshTeamProgress(t);
+      updateStats();
+      popSound();
+      lastReset = { key: k, team: t, prev };
+      showUndoToast('Figurinha dada baixa');
+    }
+
     function refreshFig(k) {
       const btn = document.getElementById(`fig-${k}`);
       if (!btn) return;
@@ -1698,8 +1717,19 @@
       if (q && firstMatch) {
         const teamBox = firstMatch.closest('.team-box');
         if (teamBox) {
-          const top = teamBox.getBoundingClientRect().top + window.scrollY - 130;
-          window.scrollTo({ top, behavior: 'smooth' });
+          const albumSection = firstMatch.closest('.album-section');
+          if (albumSection) {
+            const grid = albumSection.querySelector('.teams-grid');
+            const toggle = albumSection.querySelector('.group-toggle');
+            if (grid && grid.style.display === 'none') {
+              grid.style.display = 'grid';
+              if (toggle) toggle.textContent = '\u2212';
+            }
+          }
+          requestAnimationFrame(() => {
+            const top = teamBox.getBoundingClientRect().top + window.scrollY - 130;
+            window.scrollTo({ top, behavior: 'smooth' });
+          });
         }
       }
     }
@@ -1707,6 +1737,25 @@
       const inp = document.getElementById('search-inp');
       inp.value = '';
       doSearch('');
+      inp.focus();
+    }
+
+    function doSearchRep(raw) {
+      const q = raw.trim().toUpperCase().replace(/\s+/g, ' ');
+      const clear = document.getElementById('search-rep-clear');
+      clear.style.display = raw.trim() ? 'block' : 'none';
+      document.querySelectorAll('#rep-root .rep-card').forEach(card => {
+        const code = card.querySelector('.rep-code').textContent.toUpperCase();
+        const match = !q || code.includes(q.replace(/ /g, '-'));
+        card.style.opacity = match ? '1' : '0.15';
+        card.style.transform = match ? 'scale(1)' : 'scale(0.9)';
+        card.style.pointerEvents = match ? 'auto' : 'none';
+      });
+    }
+    function clearSearchRep() {
+      const inp = document.getElementById('search-rep');
+      inp.value = '';
+      doSearchRep('');
       inp.focus();
     }
 
@@ -1733,6 +1782,16 @@
           const c = document.createElement('div');
           c.className = 'rep-card';
           c.innerHTML = `<span class="rep-code">🔄 ${k}</span><span class="rep-cnt">${v-1}x extra</span>`;
+          c.style.cursor = 'pointer';
+          c.addEventListener('click', () => {
+            const cod = k.split('-')[0];
+            const num = parseInt(k.split('-')[1]);
+            const team = ALBUM.flatMap(g => g.times).find(t => t.cod === cod);
+            if (team) {
+              decrementFig(k, team);
+              renderRepetidas();
+            }
+          });
           root.appendChild(c);
         }
       }
