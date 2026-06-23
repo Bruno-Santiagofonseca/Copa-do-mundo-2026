@@ -1159,6 +1159,10 @@
         </button>
         <input type="file" id="import-file" accept=".json" style="display:none" onchange="doImport(event)">
       </div>
+      <div class="opt-group" id="update-group" style="display:none">
+        <div class="opt-label">🔄 Atualização</div>
+        <button class="btn-opt btn-grn" id="btn-update" onclick="applyUpdate()">🔄 Atualizar aplicação</button>
+      </div>
       <button class="btn-opt btn-red" onclick="showResetConfirm()">🚨 Apagar tudo e recomeçar</button>
     </div>
   </div>
@@ -1320,8 +1324,27 @@
 
     function registerSW() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          window._swReg = reg;
+          reg.addEventListener('updatefound', () => {
+            const sw = reg.installing;
+            if (sw) {
+              sw.addEventListener('statechange', () => {
+                if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+                  document.getElementById('update-group').style.display = 'block';
+                }
+              });
+            }
+          });
+        }).catch(() => {});
       }
+    }
+
+    function applyUpdate() {
+      if (window._swReg && window._swReg.waiting) {
+        window._swReg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+      window.location.reload();
     }
 
     function stateKey(cod, n) { return `${cod}-${n}`; }
