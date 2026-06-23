@@ -1,4 +1,4 @@
-const CACHE_NAME = 'album-copa-2026-v2';
+const CACHE_NAME = 'album-copa-2026-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -28,6 +28,10 @@ self.addEventListener('message', (e) => {
 
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((response) => response || fetch(e.request))
+    fetch(e.request).then((response) => {
+      const clone = response.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+      return response;
+    }).catch(() => caches.match(e.request))
   );
 });
